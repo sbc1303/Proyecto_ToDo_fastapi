@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from typing import List, Optional
-from models import Tarea, TareaInput, EstadoUpdate
+from models import Tarea, TareaInput, EstadoUpdate, Estado
 from database import leer_db, guardar_db, obtener_hora
 
 # Ordeno las etiquetas para que el Swagger quede más limpio
@@ -64,8 +64,7 @@ def actualizar_estado(id: int, body: EstadoUpdate):
     for t in lista:
         if t["id"] == id and t.get("esta_activa"):
             t["estado"] = body.nuevo_estado
-            # Si ponen "completada" o "terminada" marco el booleano también
-            t["completada"] = body.nuevo_estado.lower() in ["completada", "terminada"]
+            t["completada"] = body.nuevo_estado == Estado.Completada  # limpio, sin magic strings
             t["fecha_actualizacion"] = obtener_hora()
             guardar_db(lista)
             return t
