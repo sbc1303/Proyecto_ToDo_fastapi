@@ -1,0 +1,20 @@
+# Entorno virtual
+venv/
+.venv/
+env/
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Base de datos local y backup
+database.json
+database_backup.json
+temp_database.json
+
+# Variables de entorno
+.env
+
+# macOS
+.DS_Store
