@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from enum import Enum
 
@@ -24,12 +24,24 @@ class Estado(str, Enum):
 
 
 class TareaInput(BaseModel):
-    titulo: str = Field(..., min_length=3) # mínimo 3 caracteres
+    titulo: str = Field(..., min_length=3)  # mínimo 3 caracteres
     descripcion: Optional[str] = None
     prioridad: Prioridad = Prioridad.Media
     etiquetas: List[EtiquetasOpcion] = []
     fecha_vencimiento: Optional[str] = None
 
+    # Se comprueba que el Datatime tenga el formato: DD-MM-YYYY antes de guardar.
+    @field_validator("fecha_vencimiento")
+    @classmethod
+    def validar_fecha(cls, v):
+        if v is None:
+            return v
+        try:
+            from datetime import datetime
+            datetime.strptime(v, "%d-%m-%Y")
+        except ValueError:
+            raise ValueError("La fecha debe tener formato DD-MM-YYYY")
+        return v
 
 class Tarea(BaseModel):
     id: int
