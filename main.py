@@ -137,6 +137,13 @@ def restaurar_tarea(id: int):
             return t
     raise HTTPException(status_code=404, detail="No encontrada o no está en la papelera")
 
+# Vacía la papelera borrando definitivamente todas las tareas inactivas
+@app.delete("/tasks/papelera/vaciar", tags=["4. Eliminación de tareas y papelera"], summary="Vaciar papelera")
+def vaciar_papelera():
+    from database import limpiar_papelera
+    eliminadas = limpiar_papelera()
+    return {"mensaje": f"{eliminadas} tareas eliminadas definitivamente"}
+
 
 # Panel de control 
 @app.get("/dashboard", tags=["5. Panel de control"], summary="Estadísticas")
