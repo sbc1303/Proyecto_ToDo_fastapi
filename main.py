@@ -64,7 +64,7 @@ def obtener_una_tarea(
                 return t
             if prioridad is not None and t.get("prioridad") == prioridad:
                 return t
-            if fecha_creacion is not None and t.get("fecha_creacion") == fecha_creacion:
+            if fecha_creacion is not None and t.get("fecha_creacion", "").startswith(fecha_creacion):
                 return t
             if fecha_vencimiento is not None and t.get("fecha_vencimiento") == fecha_vencimiento:
                 return t
