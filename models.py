@@ -16,7 +16,7 @@ class EtiquetasOpcion(str, Enum):
     ESTUDIO = "Estudio"
     OTROS = "Otros"
 
-
+# Estado como Enum para evitar strings libres como "hecho" o "terminado"
 class Estado(str, Enum):
     Pendiente = "Pendiente"
     En_progreso = "En progreso"
@@ -24,7 +24,7 @@ class Estado(str, Enum):
 
 
 class TareaInput(BaseModel):
-    titulo: str = Field(..., min_length=3)
+    titulo: str = Field(..., min_length=3) # mínimo 3 caracteres
     descripcion: Optional[str] = None
     prioridad: Prioridad = Prioridad.Media
     etiquetas: List[EtiquetasOpcion] = []
@@ -38,13 +38,19 @@ class Tarea(BaseModel):
     prioridad: Prioridad
     etiquetas: List[EtiquetasOpcion] = []
     fecha_vencimiento: Optional[str] = None
-    estado: Estado = Estado.Pendiente      
-    completada: bool = False
+    estado: Estado = Estado.Pendiente
+    completada: bool = False # booleano para consultas rápidas sin comparar strings
     fecha_creacion: str
     fecha_actualizacion: Optional[str] = None
     fecha_eliminacion: Optional[str] = None
-    esta_activa: bool = True
+    esta_activa: bool = True # False cuando está en la papelera
 
 
+# Modelo separado para el PATCH de estado, así no hay necesidad de mandar el objeto entero
 class EstadoUpdate(BaseModel):
-    nuevo_estado: Estado                   
+    nuevo_estado: Estado
+
+# Modelo para editar solo título y descripción y que ambos sean opcionales
+class TareaEdit(BaseModel):
+    titulo: Optional[str] = Field(None, min_length=3)
+    descripcion: Optional[str] = None
