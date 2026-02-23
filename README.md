@@ -1,47 +1,40 @@
-# API REST - Gestor de Tareas
+# Gestor de Tareas - API REST con FastAPI
 
-API para gestionar tareas desarrollada con FastAPI. Los datos se guardan en un archivo JSON local, sin base de datos.
+Este proyecto se basa en el desarrollo de una API REST con FastAPI para gestionar una lista de tareas donde los datos se almacenan en un archivo JSON local, sin usar una base de datos.
 
-El proyecto cubre los requisitos del enunciado y le he ido añadiendo cosas a medida que avanzaba y veía que tenían sentido: borrado lógico, búsqueda flexible por varios campos, un panel de estadísticas y un sistema de escritura segura del JSON para no perder datos si algo falla.
+Para este proyecto se han pedido unos requisitos (Endpoints) básicos pero durante la creación de estos, fueron surgiendo ideas o mejoras que tenían sentido y aportaban valor al proyecto como han sido:
 
----
-
-## Lo que he añadido respecto a los requisitos básicos
-
-- **Backup automático al guardar**: antes de escribir en el JSON hago una copia. Además escribo en un archivo temporal y luego reemplazo el original, así si la app se cierra mal a mitad de una escritura el archivo no queda corrupto.
-- **Borrado lógico con papelera**: al eliminar una tarea no la borro del JSON, la marco como inactiva. Con `?ver_papelera=true` en el GET puedes ver las tareas eliminadas.
-- **Búsqueda flexible**: el endpoint de búsqueda acepta id, título, prioridad y fechas. Devuelve la primera tarea que coincida con cualquiera de los parámetros, sin necesidad de saber el id exacto.
-- **Modelo de datos ampliado**: prioridad, etiquetas, y fechas de creación, actualización y eliminación.
-- **Panel de control**: un endpoint extra con el total de tareas activas y cuántas están completadas.
-- **Código separado en módulos**: `main.py`, `models.py` y `database.py` para que sea más fácil de leer y modificar.
-- **Docker**: Dockerfile incluido para levantar la app en un contenedor.
+- Borrado lógico
+- Búsqueda avanzada donde no solo se puede realizar la búsqueda en base a la ID, sino por más campos.
+- Organización de los endpoints por categorías
+- Logging
 
 ---
 
-## Estructura
+## Tecnologías utilizadas
 
-```
-proyecto_todo_fastapi/
-├── main.py          # endpoints
-├── models.py        # modelos Pydantic
-├── database.py      # lectura y escritura del JSON
-├── requirements.txt
-├── Dockerfile
-└── database.json    # se crea solo al añadir la primera tarea
-```
+Para el desarrollo de este proyecto se han utilizado las siguientes tecnologías:
+
+- Python 3.11
+- FastAPI
+- Pydantic v2
+- Uvicorn
+- Docker
 
 ---
 
-## Instalación
+## Cómo ejecutar el proyecto
 
-**Local:**
+Este proyecto se puede ejecutar tanto en local como en Docker, por lo que para acceder en cada una de las opciones se seguirán los siguientes pasos:
+
+- En local:
 
 ```bash
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-**Docker:**
+- Con Docker:
 
 ```bash
 docker build -t gestor-tareas .
@@ -50,26 +43,61 @@ docker run -d -p 8000:8000 gestor-tareas
 
 ---
 
-## Endpoints
+## Endpoints disponibles
 
-| Método | Ruta                 | Descripción                                                 |
-| ------ | -------------------- | ----------------------------------------------------------- |
-| POST   | `/tasks`             | Crear tarea                                                 |
-| GET    | `/tasks`             | Listar tareas activas (o papelera con `?ver_papelera=true`) |
-| GET    | `/tasks/busqueda`    | Buscar por id, título, prioridad o fechas                   |
-| PATCH  | `/tasks/{id}/estado` | Cambiar el estado de una tarea                              |
-| DELETE | `/tasks/{id}`        | Mover a la papelera                                         |
-| GET    | `/dashboard`         | Estadísticas                                                |
+La API cuenta con los siguientes endpoints agrupados por categorías. La documentación interactiva (Swagger) está disponible en `http://localhost:8000/docs`. Donde se pueden probar directamente todas las peticiones:
+
+| Método | Ruta                           | Descripción                                               |
+| ------ | ------------------------------ | --------------------------------------------------------- |
+| POST   | `/tasks`                       | Crear una tarea nueva                                     |
+| GET    | `/tasks`                       | Listar todas las tareas activas                           |
+| GET    | `/tasks?ver_papelera=true`     | Ver tareas eliminadas                                     |
+| GET    | `/tasks?ordenar_por=prioridad` | Ordenar por prioridad, fecha_creacion o fecha_vencimiento |
+| GET    | `/tasks/busqueda`              | Buscar por id, título, prioridad o fechas                 |
+| PATCH  | `/tasks/{id}`                  | Editar título y/o descripción                             |
+| PATCH  | `/tasks/{id}/estado`           | Cambiar el estado de una tarea                            |
+| DELETE | `/tasks/{id}`                  | Mover una tarea a la papelera                             |
+| PATCH  | `/tasks/{id}/restaurar`        | Restaurar una tarea desde la papelera                     |
+| DELETE | `/tasks/papelera/vaciar`       | Vaciar la papelera definitivamente                        |
+| GET    | `/dashboard`                   | Ver estadísticas generales                                |
 
 ---
 
-## Probar la API
+## Estructura del proyecto
 
-Con la app corriendo, la documentación interactiva está en:
+El código está separado en tres archivos principales para que sea más fácil la lectura, modificación o ampliación. Cada archivo tiene una función determinada:
 
 ```
-http://localhost:8000/docs
+Proyecto_ToDo_fastapi/
+├── main.py          # Aquí están todos los endpoints, separados por categorías
+├── models.py        # Los modelos Pydantic, con los Enum y las validaciones
+├── database.py      # Todo lo relacionado con leer y escribir el JSON, incluido el backup
+├── requirements.txt
+├── Dockerfile
+├── .dockerignore
+└── database.json    # Se genera automáticamente al crear la primera tarea
 ```
+
+---
+
+## Funciones añadidas para dar valor al proyecto
+
+Como se ha comentado en la primera parte, durante la creación de la API, han ido surgiendo apartados que considero que dan un valor añadido al trabajo. Como son:
+
+- **Borrado lógico**: las tareas eliminadas no se borran del JSON, se marcan como inactivas. Así se pueden restaurar si hace falta.
+- **Búsqueda flexible**: no hace falta saber el id exacto, puedes buscar por título, prioridad o fechas.
+- **Ordenación del listado**: por prioridad, fecha de creación o fecha de vencimiento.
+- **Validación de fechas**: la fecha de vencimiento solo acepta el formato DD-MM-YYYY, si no lo cumple da error.
+- **Estado como Enum**: evita que se pueda guardar cualquier string como estado.
+- **Panel de estadísticas**: muestra el total de tareas, cuántas están completadas, pendientes y en progreso.
+- **Logging**: cada vez que se lee o escribe el JSON aparece un mensaje en consola. También avisa si el archivo está corrupto y tira del backup.
+- **Escritura segura del JSON**: antes de escribir se hace una copia de seguridad. Además se usa un archivo temporal para que si la app se cierra a mitad de una escritura el JSON no quede corrupto.
+
+---
+
+## Ejemplos de uso
+
+A continuación se muestran algunos ejemplos de las peticiones más comunes. Para poder comprobarlo se puede usar Swagger en `http://localhost:8000/docs` o cualquier herramienta (en este caso también se ha utilizado Postman):
 
 **Crear una tarea:**
 
@@ -79,15 +107,49 @@ POST /tasks
   "titulo": "Estudiar para el examen",
   "prioridad": "Alta",
   "etiquetas": ["Estudio"],
-  "fecha_vencimiento": "2025-03-01"
+  "fecha_vencimiento": "01-03-2025"
 }
 ```
 
-**Cambiar estado:**
+**Cambiar el estado:**
 
 ```json
 PATCH /tasks/1/estado
 {
   "nuevo_estado": "Completada"
 }
+```
+
+**Buscar una tarea por título:**
+
+```
+GET /tasks/busqueda?titulo=examen
+```
+
+**Revisar las tareas ordenadas por prioridad:**
+
+```
+GET /tasks?ordenar_por=prioridad
+```
+
+**Eliminar una tarea (se mueve a la papelera, no se borra definitivamente):**
+
+```
+DELETE /tasks/1
+```
+
+**Ver las tareas eliminadas y si se desea, restaurar la tarea:**
+
+```
+GET /tasks?ver_papelera=true
+```
+
+```json
+PATCH /tasks/1/restaurar
+```
+
+**Si se desea eliminar la tarea definitivamente:**
+
+```
+DELETE /tasks/papelera/vaciar
 ```
