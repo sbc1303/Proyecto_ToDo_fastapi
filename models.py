@@ -19,7 +19,7 @@ class EtiquetasOpcion(str, Enum):
 # Estado como Enum para evitar strings libres como "hecho" o "terminado"
 class Estado(str, Enum):
     Pendiente = "Pendiente"
-    En_progreso = "En progreso"
+    En_proceso = "En proceso"
     Completada = "Completada"
 
 

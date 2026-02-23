@@ -84,14 +84,14 @@ Proyecto_ToDo_fastapi/
 
 Como se ha comentado en la primera parte, durante la creación de la API, han ido surgiendo apartados que considero que dan un valor añadido al trabajo. Como son:
 
-- **Borrado lógico**: las tareas eliminadas no se borran del JSON, se marcan como inactivas. Así se pueden restaurar si hace falta.
-- **Búsqueda flexible**: no hace falta saber el id exacto, puedes buscar por título, prioridad o fechas.
-- **Ordenación del listado**: por prioridad, fecha de creación o fecha de vencimiento.
-- **Validación de fechas**: la fecha de vencimiento solo acepta el formato DD-MM-YYYY, si no lo cumple da error.
-- **Estado como Enum**: evita que se pueda guardar cualquier string como estado.
-- **Panel de estadísticas**: muestra el total de tareas, cuántas están completadas, pendientes y en progreso.
-- **Logging**: cada vez que se lee o escribe el JSON aparece un mensaje en consola. También avisa si el archivo está corrupto y tira del backup.
-- **Escritura segura del JSON**: antes de escribir se hace una copia de seguridad. Además se usa un archivo temporal para que si la app se cierra a mitad de una escritura el JSON no quede corrupto.
+- **Borrado lógico**: Las tareas eliminadas no se borran del JSON, se marcan como inactivas. Así se pueden restaurar si fuera necesario.
+- **Búsqueda flexible**: Existe la posibilidad de no conocer la ID, por lo que amplía la búsqueda a buscar por título, prioridad o fechas.
+- **Ordenación del listado**: Se puede ordenar en función de la prioridad, fecha de creación o fecha de vencimiento.
+- **Validación de fechas**: La fecha de vencimiento solo acepta el formato DD-MM-YYYY, si no se cumple lanza un mensaje de error.
+- **Estado como Enum**: Se han definido los estados posibles ("Pendiente", "En proceso" y "Completada") para evitar que se introduzca cualquier string libre.
+- **Panel de estadísticas**: Muestra el total de tareas guardadas, cuántas están completadas, pendientes y en proceso.
+- **Logging**: Cada vez que se lee o escribe el JSON aparece un mensaje en consola. También avisa si el archivo está corrupto y acude al backup.
+- **Escritura segura del JSON**: Antes de escribir se realiza una copia de seguridad, además de usar un archivo temporal para evitar que el JSON quede corrupto.
 
 ---
 

@@ -153,5 +153,5 @@ def estadisticas():
         "total": len(activas),
         "completadas": len([t for t in activas if t.get("completada")]),
         "pendientes": len([t for t in activas if t.get("estado") == "Pendiente"]),
-        "en_progreso": len([t for t in activas if t.get("estado") == "En progreso"])
+        "en_proceso": len([t for t in activas if t.get("estado") == "En proceso"])
     }
