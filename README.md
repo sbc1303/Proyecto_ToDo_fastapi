@@ -52,7 +52,7 @@ http://localhost:8000/docs
 
 La API incluye documentación automática generada por FastAPI mediante Swagger, donde se pueden probar todos los endpoints directamente desde el navegador.
 
-![Swagger](docs/swagger.png)
+![Swagger](docs/Swagger.png)
 
 ---
 
