@@ -46,6 +46,13 @@ La documentación interactiva (Swagger):
 
 ```
 http://localhost:8000/docs
+
+
+## Interfaz Swagger
+
+La API incluye documentación automática generada por FastAPI mediante Swagger, donde se pueden probar todos los endpoints directamente desde el navegador.
+
+![Swagger](docs/swagger.png)
 ```
 
 ---
